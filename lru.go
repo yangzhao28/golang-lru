@@ -3,7 +3,7 @@ package lru
 import (
 	"sync"
 
-	"github.com/hashicorp/golang-lru/simplelru"
+	"github.com/yangzhao28/golang-lru/simplelru"
 )
 
 // Cache is a thread-safe fixed size LRU cache.
@@ -49,6 +49,17 @@ func (c *Cache) Get(key interface{}) (value interface{}, ok bool) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	return c.lru.Get(key)
+}
+
+// Get looks up a key's value from the cache.
+func (c *Cache) GetAndRemoveWithouEvict(key interface{}) (value interface{}, ok bool) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	v, ok := c.lru.Get(key)
+	if ok {
+		c.lru.RemoveWithoutEvict(key)
+	}
+	return v, ok
 }
 
 // Contains checks if a key is in the cache, without updating the

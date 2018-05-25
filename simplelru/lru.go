@@ -105,6 +105,14 @@ func (c *LRU) Remove(key interface{}) (present bool) {
 	return false
 }
 
+func (c *LRU) RemoveWithoutEvict(key interface{}) (present bool) {
+	if ent, ok := c.items[key]; ok {
+		c.removeElementWithoutEvict(ent)
+		return true
+	}
+	return false
+}
+
 // RemoveOldest removes the oldest item from the cache.
 func (c *LRU) RemoveOldest() (key interface{}, value interface{}, ok bool) {
 	ent := c.evictList.Back()
@@ -158,4 +166,11 @@ func (c *LRU) removeElement(e *list.Element) {
 	if c.onEvict != nil {
 		c.onEvict(kv.key, kv.value)
 	}
+}
+
+// removeElement is used to remove a given list element from the cache
+func (c *LRU) removeElementWithoutEvict(e *list.Element) {
+	c.evictList.Remove(e)
+	kv := e.Value.(*entry)
+	delete(c.items, kv.key)
 }
