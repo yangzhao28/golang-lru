@@ -52,7 +52,7 @@ func (c *Cache) Get(key interface{}) (value interface{}, ok bool) {
 }
 
 // Get looks up a key's value from the cache.
-func (c *Cache) GetAndRemoveWithouEvict(key interface{}) (value interface{}, ok bool) {
+func (c *Cache) GetAndRemoveWithoutEvict(key interface{}) (value interface{}, ok bool) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	v, ok := c.lru.Get(key)
